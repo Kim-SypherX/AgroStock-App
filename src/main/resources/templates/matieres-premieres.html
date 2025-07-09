@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Matières Premières'"></title>
+    <style>
+        .button-bar {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-add { background-color: #4CAF50; }
+        .btn-add:hover { background-color: #45a049; }
+        .btn-modify { background-color: #2196F3; }
+        .btn-modify:hover { background-color: #1976D2; }
+        .btn-delete { background-color: #f44336; }
+        .btn-delete:hover { background-color: #da190b; }
+        .selected-row { background-color: #f0f0f0; }
+        .card { padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+                table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd; /* Ajouté */
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd; /* Ajouté */
+        }
+        th {
+            background-color: #f2f2f2;
+            border-top: 1px solid #ddd; /* Ajouté */
+        }
+        tr:last-child td {
+            border-bottom: none; /* Évite le double trait */
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <a th:href="@{/dashboard}" th:class="${activePage == '/dashboard'} ? 'active'">Tableau de bord</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matière Première</a>
+    <a th:href="@{/production}" th:class="${activePage == '/production'} ? 'active'">Production</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produit Fini</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+</nav>
+<div class="container">
+    <div class="text-center mt-2">
+        <h1>Matières Premières</h1>
+        <div class="button-bar">
+            <a th:href="@{/matieres-premieres/add}" class="btn btn-add">Ajouter</a>
+            <a th:href="@{/matieres-premieres/edit/}+${selectedCode}" class="btn btn-modify" id="modifyBtn" onclick="return validateSelection()">Modifier</a>
+            <a th:href="@{/matieres-premieres/delete/}+${selectedCode}" class="btn btn-delete" id="deleteBtn" onclick="return confirm('Confirmer la suppression ?') && validateSelection()">Supprimer</a>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <div class="card">
+        <h2>Liste des matières premières</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Nom</th>
+                <th>Quantité</th>
+                <th>Prix Unitaire</th>
+                <th>Catégorie</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m, iter : ${matieres}" th:class="${iter.index == selectedIndex} ? 'selected-row'" th:onclick="'updateSelection(' + ${iter.index} + ')'">
+                <td th:text="${m.code}"></td>
+                <td th:text="${m.nom}"></td>
+                <td th:text="${#numbers.formatDecimal(m.quantiteStock, 2, 2)}"></td>
+                <td th:text="${#numbers.formatDecimal(m.prixUnitaire, 2, 2)}"></td>
+                <td th:text="${m.categorie}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(matieres)}" class="text-center p-2">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.6;">📦</div>
+            <h3>Aucune matière première trouvée</h3>
+            <p>Commencez par ajouter votre première matière.</p>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let selectedIndex = -1;
+    let selectedCode = /*[[${matieres.isEmpty() ? '' : matieres[0].code}]]*/ '';
+
+    function updateSelection(index) {
+        selectedIndex = index;
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach((row, i) => row.classList.toggle('selected-row', i === index));
+        // Extraire le code de la ligne sélectionnée de manière fiable
+        const selectedRow = rows[index];
+        selectedCode = selectedRow.cells[0].textContent.trim(); // Prend le code de la première cellule
+        console.log("Selected Code for Modify: " + selectedCode); // Débogage
+        document.getElementById('modifyBtn').href = '/matieres-premieres/edit/' + encodeURIComponent(selectedCode);
+        document.getElementById('deleteBtn').href = '/matieres-premieres/delete/' + encodeURIComponent(selectedCode);
+    }
+
+    function validateSelection() {
+        if (selectedIndex === -1) {
+            alert("Veuillez sélectionner une matière première.");
+            return false;
+        }
+        return true;
+    }
+
+    // Initialisation au chargement
+    window.onload = function() {
+        const rows = document.querySelectorAll('tbody tr');
+        if (rows.length > 0) {
+            rows[0].classList.add('selected-row');
+            updateSelection(0);
+        }
+    };
+</script>
+</body>
+</html>
