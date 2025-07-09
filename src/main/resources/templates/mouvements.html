@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}"></title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/}" th:class="${activePage == '/'} ? 'active'">Tableau de Bord</a>
+    <a th:href="@{/inventaires}" th:class="${activePage == '/inventaires'} ? 'active'">Inventaires</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matières Premières</a>
+    <a th:href="@{/mouvements}" th:class="${activePage == '/mouvements'} ? 'active'">Mouvements</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produits Finis</a>
+    <a th:href="@{/lignes-inventaire}" th:class="${activePage == '/lignes-inventaire'} ? 'active'">Lignes d'Inventaire</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+    <a th:href="@{/operations-credit}" th:class="${activePage == '/operations-credit'} ? 'active'">Opérations de Crédit</a>
+</nav>
+
+<div class="container">
+    <div class="text-center mt-2">
+        <h1>Mouvements</h1>
+        <a th:href="@{/mouvements/add}" class="btn-add mt-1">Ajouter Mouvement</a>
+    </div>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <div class="card">
+        <h2>Liste des mouvements</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Produit</th>
+                <th>Type</th>
+                <th>Quantité</th>
+                <th>Date</th>
+                <th>Motif</th>
+                <th>Fournisseur</th>
+                <th>Client</th>
+                <th>Opération Crédit</th>
+                <th>Type Produit</th>
+                <th class="text-center">Actions</th> <!-- Restauré -->
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${mouvements}">
+                <td th:text="${m.id}"></td>
+                <td th:text="${m.produitCode}"></td>
+                <td th:text="${m.type}"></td>
+                <td th:text="${m.quantite}"></td>
+                <td th:text="${#temporals.format(m.date, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${m.motif != null ? m.motif : 'N/A'}"></td>
+                <td th:text="${m.fournisseur != null ? m.fournisseur.nom : 'N/A'}"></td> <!-- Affichage du nom -->
+                <td th:text="${m.client != null ? m.client.nom : 'N/A'}"></td> <!-- Affichage du nom -->
+                <td th:text="${m.operationCredit != null ? m.operationCredit.id : 'N/A'}"></td>
+                <td th:text="${m.produitType}"></td>
+                <td class="text-center">
+                    <a th:href="@{/mouvements/delete/}+${m.id}" onclick="return confirm('Confirmer la suppression ?');" class="btn-delete">Supprimer</a>
+                </td> <!-- Restauré -->
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(mouvements)}" class="text-center p-2">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.6;">📦</div>
+            <h3>Aucun mouvement trouvé</h3>
+            <p>Commencez par ajouter votre premier mouvement.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

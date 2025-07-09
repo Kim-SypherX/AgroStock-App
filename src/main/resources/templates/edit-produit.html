@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifier un Produit Fini</title>
+</head>
+<body>
+<nav>
+  <a th:href="@{/dashboard}" th:class="${activePage == '/dashboard'} ? 'active'">Tableau de bord</a>
+  <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matière Première</a>
+  <a th:href="@{/production}" th:class="${activePage == '/production'} ? 'active'">Production</a>
+  <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produit Fini</a>
+  <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+  <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+</nav>
+
+<div class="container">
+  <h1>Modifier un Produit Fini</h1>
+  <div th:if="${error}" class="error-message" th:text="${error}"></div>
+  <form th:action="@{/produits-finis/update}" th:object="${produit}" method="post">
+    <label>Code :</label>
+    <input type="text" th:field="*{code}" readonly /><br/>
+    <label>Nom :</label>
+    <input type="text" th:field="*{nom}" required /><br/>
+    <label>Catégorie :</label>
+    <input type="text" th:field="*{categorie}" required /><br/>
+    <label>Quantité Produite :</label>
+    <input type="number" th:field="*{quantiteProduite}" step="0.01" min="0" required /><br/>
+    <label>Prix Unitaire :</label>
+    <input type="number" th:field="*{prixUnitaire}" step="0.01" min="0" /><br/>
+    <label>Quantité en Stock :</label>
+    <input type="number" th:field="*{quantiteStock}" step="0.01" min="0" /><br/>
+    <button type="submit" class="btn">Mettre à jour</button>
+  </form>
+</div>
+</body>
+</html>

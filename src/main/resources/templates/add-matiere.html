@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une Matière Première</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/dashboard}" th:class="${activePage == '/dashboard'} ? 'active'">Dashboard</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matière Première</a>
+    <a th:href="@{/production}" th:class="${activePage == '/production'} ? 'active'">Production</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produit Fini</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+</nav>
+
+<div class="container">
+    <h1>Ajouter une Matière Première</h1>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <form th:action="@{/matieres-premieres}" th:object="${matiere}" method="post">
+        <label>Type :</label>
+        <select th:field="*{type}" onchange="updateDetails(this)" required>
+            <option value="" disabled selected>Sélectionner un type</option>
+            <option th:each="t, iter : ${types}" th:value="${t}" th:text="${typeNames[iter.index]}"></option>
+        </select><br/>
+        <label>Nom :</label>
+        <input type="text" th:field="*{nom}" id="nomInput" readonly /><br/>
+        <label>Quantité :</label>
+        <input type="number" th:field="*{quantiteStock}" step="0.01" min="0" required /><br/>
+        <label>Prix Unitaire :</label>
+        <input type="number" th:field="*{prixUnitaire}" step="0.01" min="0" required /><br/>
+        <!-- Champs cachés pour code et categorie -->
+        <input type="hidden" th:field="*{code}" />
+        <input type="hidden" th:field="*{categorie}" />
+        <button type="submit">Ajouter</button>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    function updateDetails(select) {
+        const typeNames = /*[[${typeNames}]]*/ [];
+        const types = /*[[${types}]]*/ [];
+        const index = types.indexOf(select.value);
+        if (index !== -1) {
+            document.getElementById('nomInput').value = typeNames[index];
+        } else {
+            document.getElementById('nomInput').value = '';
+        }
+    }
+
+    window.onload = function() {
+        const select = document.querySelector('select[name="type"]');
+        if (select.value) {
+            updateDetails(select);
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Ligne d'Inventaire</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/}" th:class="${activePage == '/'} ? 'active'">Tableau de Bord</a>
+    <a th:href="@{/inventaires}" th:class="${activePage == '/inventaires'} ? 'active'">Inventaires</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matières Premières</a>
+    <a th:href="@{/mouvements}" th:class="${activePage == '/mouvements'} ? 'active'">Mouvements</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produits Finis</a>
+    <a th:href="@{/lignes-inventaire}" th:class="${activePage == '/lignes-inventaire'} ? 'active'">Lignes d'Inventaire</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+    <a th:href="@{/operations-credit}" th:class="${activePage == '/operations-credit'} ? 'active'">Opérations de Crédit</a>
+</nav>
+
+<div class="container">
+    <div class="text-center mt-2">
+        <h1>Modifier Ligne d'Inventaire</h1>
+        <a href="/lignes-inventaire" class="btn-secondary mt-1">Retour</a>
+    </div>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <form th:action="@{/lignes-inventaire/edit}" th:object="${ligneInventaire}" method="post">
+        <div class="card">
+            <input type="hidden" th:field="*{id}" />
+            <label>Inventaire ID</label>
+            <input th:field="*{inventaireId}" type="number" required />
+            <label>Produit Code</label>
+            <input th:field="*{produitCode}" type="text" required />
+            <label>Quantité</label>
+            <input th:field="*{quantite}" type="number" required step="0.01" />
+            <button type="submit">Enregistrer</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

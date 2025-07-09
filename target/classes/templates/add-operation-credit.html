@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une Opération de Crédit</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/}" th:class="${activePage == '/'} ? 'active'">Tableau de Bord</a>
+    <a th:href="@{/inventaires}" th:class="${activePage == '/inventaires'} ? 'active'">Inventaires</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matières Premières</a>
+    <a th:href="@{/mouvements}" th:class="${activePage == '/mouvements'} ? 'active'">Mouvements</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produits Finis</a>
+    <a th:href="@{/lignes-inventaire}" th:class="${activePage == '/lignes-inventaire'} ? 'active'">Lignes d'Inventaire</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+    <a th:href="@{/operations-credit}" th:class="${activePage == '/operations-credit'} ? 'active'">Opérations de Crédit</a>
+</nav>
+
+<div class="container">
+    <h1>Ajouter une Opération de Crédit</h1>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <form th:action="@{/operations-credit}" th:object="${operation}" method="post">
+        <label>Date :</label>
+        <input type="date" th:field="*{date}" required /><br/>
+        <label>Type :</label>
+        <select th:field="*{type}" required>
+            <option value="ACHAT">Achat</option>
+            <option value="VENTE">Vente</option>
+        </select><br/>
+        <label>Montant :</label>
+        <input type="number" th:field="*{montant}" step="0.01" required /><br/>
+        <label>Référence :</label>
+        <input type="text" th:field="*{reference}" /><br/>
+        <label>Statut :</label>
+        <select th:field="*{statut}" required>
+            <option value="NON_PAYE">Non Payé</option>
+            <option value="PAYE">Payé</option>
+            <option value="PARTIEL">Partiel</option>
+        </select><br/>
+        <label>Fournisseur :</label>
+        <select th:field="*{fournisseur}" th:with="fournisseurs=${fournisseurs}">
+            <option value="null">Aucun</option>
+            <option th:each="f : ${fournisseurs}" th:value="${f}" th:text="${f.nom}"></option>
+        </select><br/>
+        <label>Client :</label>
+        <select th:field="*{client}" th:with="clients=${clients}">
+            <option value="null">Aucun</option>
+            <option th:each="c : ${clients}" th:value="${c}" th:text="${c.nom}"></option>
+        </select><br/>
+        <button type="submit">Ajouter</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Production'"></title>
+    <style>
+        .container { padding: 20px; }
+        .card { padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        .error-message { color: red; margin-bottom: 10px; }
+        .btn { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px; display: inline-block; }
+        .btn:hover { background-color: #45a049; }
+        .remove-btn { background-color: #f44336; margin-right: 10px; }
+        .details-btn { background-color: #2196F3; }
+        .detail-row { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<nav>
+    <a th:href="@{/dashboard}" th:class="${activePage == '/dashboard'} ? 'active'">Tableau de bord</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matière Première</a>
+    <a th:href="@{/production}" th:class="${activePage == '/production'} ? 'active'">Production</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produit Fini</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+</nav>
+
+<div class="container">
+    <h1 th:text="${title}"></h1>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <div class="card">
+        <form th:action="@{/production}" th:object="${production}" method="post">
+            <label>Nom de la Production :</label>
+            <select th:field="*{nom}" required>
+                <option value="">Sélectionner une production</option>
+                <!-- Combinaisons avec Jus de... -->
+                <option th:value="'Jus de Pomme'">Jus de Pomme</option>
+                <option th:value="'Jus de Fraise'">Jus de Fraise</option>
+                <option th:value="'Jus de Mangue'">Jus de Mangue</option>
+                <option th:value="'Jus de Citron'">Jus de Citron</option>
+                <!-- Combinaisons avec Confiture de... -->
+                <option th:value="'Confiture de Pomme'">Confiture de Pomme</option>
+                <option th:value="'Confiture de Fraise'">Confiture de Fraise</option>
+                <option th:value="'Confiture de Mangue'">Confiture de Mangue</option>
+                <option th:value="'Confiture de Citron'">Confiture de Citron</option>
+                <!-- Combinaisons avec Sirop de... -->
+                <option th:value="'Sirop de Pomme'">Sirop de Pomme</option>
+                <option th:value="'Sirop de Fraise'">Sirop de Fraise</option>
+                <option th:value="'Sirop de Mangue'">Sirop de Mangue</option>
+                <option th:value="'Sirop de Citron'">Sirop de Citron</option>
+                <!-- Combinaisons avec Infusion de... -->
+                <option th:value="'Infusion de Thé'">Infusion de Thé</option>
+                <option th:value="'Infusion de Herbes'">Infusion de Herbes</option>
+                <!-- Items standalone -->
+                <option th:value="'Attieke'">Attieke</option>
+                <option th:value="'Gari'">Gari</option>
+                <option th:value="'Farine'">Farine</option>
+                <option th:value="'Gâteaux'">Gâteaux</option>
+            </select><br/>
+            <div id="details-container">
+                <div th:each="detail, iter : *{details}" class="detail-row">
+                    <select name="details[__${iter.index}__].matierePremiere.code" required>
+                        <option value="">Sélectionner une matière</option>
+                        <option th:each="m : ${matieres}" th:value="${m.code}" th:text="${m.nom}" th:selected="${detail.matierePremiere != null && detail.matierePremiere.code == m.code}"></option>
+                    </select>
+                    <input type="number" name="details[__${iter.index}__].quantiteUtilisee" th:value="${detail.quantiteUtilisee}" step="0.01" min="0" required placeholder="Quantité" />
+                    <button type="button" class="btn remove-btn" th:unless="${iter.first}" onclick="removeDetail(this)">Supprimer</button>
+                </div>
+            </div>
+            <button type="button" class="btn" id="add-detail-btn">Ajouter une matière</button>
+            <button type="submit" class="btn">Lancer la Production</button>
+        </form>
+        <h2>Historique des Productions</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${productions}">
+                <td th:text="${p.nom}"></td>
+                <td th:text="${#temporals.format(p.date, 'dd/MM/yyyy HH:mm')}"></td>
+                <td><a th:href="@{'/production/' + ${p.id} + '/details'}" class="btn details-btn">Voir Détails</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM fully loaded");
+        const container = document.getElementById('details-container');
+        const addButton = document.getElementById('add-detail-btn');
+
+        if (!container || !addButton) {
+            console.error("Container or add button not found:", { container, addButton });
+            return;
+        }
+
+        addButton.addEventListener('click', addDetail);
+
+        function addDetail() {
+            console.log("addDetail called");
+            const index = container.children.length;
+            const div = document.createElement('div');
+            div.className = 'detail-row';
+            div.innerHTML = `
+                <select name="details[${index}].matierePremiere.code" required>
+                    <option value="">Sélectionner une matière</option>
+                </select>
+                <input type="number" name="details[${index}].quantiteUtilisee" step="0.01" min="0" required placeholder="Quantité" />
+                <button type="button" class="btn remove-btn" onclick="removeDetail(this)">Supprimer</button>
+            `;
+            container.appendChild(div);
+
+            // Remplir les options dynamiquement
+            const select = div.querySelector('select');
+            const matieres = /*[[${matieres}]]*/ [];
+            matieres.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m.code;
+                option.textContent = m.nom;
+                select.appendChild(option);
+            });
+        }
+
+        function removeDetail(button) {
+            console.log("removeDetail called");
+            button.parentElement.remove();
+        }
+    });
+</script>
+</body>
+</html>

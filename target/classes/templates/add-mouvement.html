@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter Mouvement</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/}" th:class="${activePage == '/'} ? 'active'">Tableau de Bord</a>
+    <a th:href="@{/inventaires}" th:class="${activePage == '/inventaires'} ? 'active'">Inventaires</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matières Premières</a>
+    <a th:href="@{/mouvements}" th:class="${activePage == '/mouvements'} ? 'active'">Mouvements</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produits Finis</a>
+    <a th:href="@{/lignes-inventaire}" th:class="${activePage == '/lignes-inventaire'} ? 'active'">Lignes d'Inventaire</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+    <a th:href="@{/operations-credit}" th:class="${activePage == '/operations-credit'} ? 'active'">Opérations de Crédit</a>
+</nav>
+
+<div class="container">
+    <div class="text-center mt-2">
+        <h1>Ajouter Mouvement</h1>
+        <a href="/mouvements" class="btn-secondary mt-1">Retour</a>
+    </div>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <form th:action="@{/mouvements}" th:object="${mouvement}" method="post">
+        <div class="card">
+            <label>Produit Code :</label>
+            <input th:field="*{produitCode}" type="text" required placeholder="Ex: MP-MAN-001" /><br/>
+            <label>Quantité :</label>
+            <input th:field="*{quantite}" type="number" min="0.01" step="0.01" required placeholder="Ex: 1.00" /><br/>
+            <label>Type :</label>
+            <select th:field="*{type}" required>
+                <option value="">Sélectionner un type</option>
+                <option th:each="type : ${T(com.agrostock.model.MouvementStock.TypeMouvement).values()}"
+                        th:value="${type}" th:text="${type}"
+                        th:selected="${mouvement.type == type}"></option>
+            </select><br/>
+            <div th:if="${mouvement.type == T(com.agrostock.model.MouvementStock.TypeMouvement).ENTREE}">
+                <label>Fournisseur ID :</label>
+                <input th:field="*{fournisseur.id}" type="number" th:value="${mouvement.fournisseur != null ? mouvement.fournisseur.id : ''}" required /><br/>
+            </div>
+            <div th:if="${mouvement.type == T(com.agrostock.model.MouvementStock.TypeMouvement).SORTIE}">
+                <label>Client ID :</label>
+                <input th:field="*{client.id}" type="number" th:value="${mouvement.client != null ? mouvement.client.id : ''}" required /><br/>
+            </div>
+            <label>Motif :</label>
+            <input th:field="*{motif}" type="text" /><br/>
+            <label>Type de Produit :</label>
+            <select th:field="*{produitType}" required>
+                <option value="">Sélectionner un type</option>
+                <option th:each="prodType : ${T(com.agrostock.model.MouvementStock.ProduitType).values()}"
+                        th:value="${prodType}" th:text="${prodType}"
+                        th:selected="${mouvement.produitType == prodType}"></option>
+            </select><br/>
+            <button type="submit">Ajouter</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

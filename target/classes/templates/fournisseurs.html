@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Fournisseurs'"></title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/dashboard}" th:class="${activePage == '/dashboard'} ? 'active'">Tableau de bord</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matière Première</a>
+    <a th:href="@{/production}" th:class="${activePage == '/production'} ? 'active'">Production</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produit Fini</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+</nav>
+
+<div class="container">
+    <div class="text-center mt-2">
+        <h1>Fournisseurs</h1>
+        <a th:href="@{/fournisseurs/add}" class="btn-add mt-1">Ajouter Fournisseur</a>
+    </div>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <div class="card">
+        <h2>Liste des fournisseurs</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Contact</th>
+                <th>Solde Crédit</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="f : ${fournisseurs}">
+                <td th:text="${f.id}"></td>
+                <td th:text="${f.nom}"></td>
+                <td th:text="${f.contact != null ? f.contact : 'N/A'}"></td>
+                <td th:text="${#numbers.formatDecimal(f.soldeCredit, 2, 2)}"></td>
+                <td class="text-center">
+                    <a th:href="@{/fournisseurs/delete/}+${f.id}" onclick="return confirm('Confirmer la suppression ?');" class="btn-delete">Supprimer</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(fournisseurs)}" class="text-center p-2">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.6;">📧</div>
+            <h3>Aucun fournisseur trouvé</h3>
+            <p>Commencez par ajouter votre premier fournisseur.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Produit Fini</title>
+    <style>
+        .btn { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+        .btn:hover { background-color: #45a049; }
+        .btn-edit { background-color: #2196F3; }
+        .btn-delete { background-color: #f44336; }
+        .error-message { color: red; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<nav>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matière Première</a>
+    <a th:href="@{/production}" th:class="${activePage == '/production'} ? 'active'">Production</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produit Fini</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+</nav>
+
+<div class="container">
+    <h1>Ajouter un Produit Fini</h1>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <form th:action="@{/produits-finis}" th:object="${produit}" method="post">
+        <label>Sélectionner une Production :</label>
+        <select name="productionId" required>
+            <option value="">Choisir une production</option>
+            <option th:each="p : ${productions}" th:value="${p.id}" th:text="${#strings.concat(p.nom, ' (', #temporals.format(p.date, 'dd/MM/yyyy'), ')')}"></option>
+        </select><br/>
+        <label>Quantité Produite :</label>
+        <input type="number" th:field="*{quantiteProduite}" step="0.01" min="0" required placeholder="Quantité produite" /><br/>
+        <label>Prix Unitaire :</label>
+        <input type="number" th:field="*{prixUnitaire}" step="0.01" min="0" placeholder="Prix unitaire (défaut: 0.00)" /><br/>
+        <button type="submit" class="btn">Ajouter</button>
+        <a th:href="@{/produits-finis/edit/}+${produit.code}" class="btn btn-edit" th:unless="${produit.code == null}">Modifier</a>
+        <a th:href="@{/produits-finis/delete/}+${produit.code}" class="btn btn-delete" onclick="return confirm('Confirmer la suppression ?');" th:unless="${produit.code == null}">Supprimer</a>
+    </form>
+</div>
+</body>
+</html>

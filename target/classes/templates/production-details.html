@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Détails Production'"></title>
+    <style>
+        .container { padding: 20px; }
+        .card { padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+<nav>
+    <a th:href="@{/dashboard}" th:class="${activePage == '/dashboard'} ? 'active'">Tableau de bord</a>
+    <a th:href="@{/matieres-premieres}" th:class="${activePage == '/matieres-premieres'} ? 'active'">Matière Première</a>
+    <a th:href="@{/production}" th:class="${activePage == '/production'} ? 'active'">Production</a>
+    <a th:href="@{/produits-finis}" th:class="${activePage == '/produits-finis'} ? 'active'">Produit Fini</a>
+    <a th:href="@{/fournisseurs}" th:class="${activePage == '/fournisseurs'} ? 'active'">Fournisseurs</a>
+    <a th:href="@{/clients}" th:class="${activePage == '/clients'} ? 'active'">Clients</a>
+</nav>
+
+<div class="container">
+    <h1 th:text="'Détails de ' + ${production.nom}"></h1>
+    <div class="card">
+        <p><strong>Date :</strong> <span th:text="${#temporals.format(production.date, 'dd/MM/yyyy HH:mm')}"></span></p>
+        <h2>Matières Utilisées</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Matière</th>
+                <th>Quantité</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="detail : ${production.details}">
+                <td th:text="${detail.matierePremiere.code}"></td>
+                <td th:text="${detail.matierePremiere.nom}"></td>
+                <td th:text="${#numbers.formatDecimal(detail.quantiteUtilisee, 2, 2)}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/production}" class="btn">Retour</a>
+    </div>
+</div>
+</body>
+</html>
