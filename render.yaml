@@ -4,7 +4,7 @@ services:
     env: java
     region: frankfurt
     buildCommand: mvn clean install
-    startCommand: java -jar target/*.jar
+    startCommand: java -jar target/agrostock-0.0.1-SNAPSHOT.jar
     plan: free
     branch: main
     envVars:
