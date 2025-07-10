@@ -3,10 +3,10 @@ services:
     name: agrostock
     env: java
     region: frankfurt
-    buildCommand: mvn clean install
-    startCommand: java -jar target/agrostock-0.0.1-SNAPSHOT.jar
     plan: free
     branch: main
+    buildCommand: mvn clean install
+    startCommand: java -jar target/agrostock-0.0.1-SNAPSHOT.jar
     envVars:
       - key: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://dpg-d1ncud6r433s73ftvaa0-a.frankfurt-postgres.render.com/agrostock
@@ -14,3 +14,4 @@ services:
         value: agrostock_user
       - key: SPRING_DATASOURCE_PASSWORD
         value: FJscxhrvWg2056ha2sSQiBrt0EO9NRp4
+
